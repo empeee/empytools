@@ -100,7 +100,7 @@ def get_si_str(x):
                String that is x/scale with SI prefix
     """
     scale, unit = get_si(x)
-    return f'{x/scale:0.3} {unit}'
+    return f"{x/scale:0.3} {unit}"
 
 
 def slice(x, length):
@@ -129,12 +129,11 @@ def slice(x, length):
 
     if length > x.size:
         raise ValueError(
-            f'length ({length}) cannot be greater than the '
-            f'size of x ({x.size})'
+            f"length ({length}) cannot be greater than the size of x ({x.size})"
         )
 
     num = int(np.floor(x.size / length))
-    x_slice = x[0: num * length]
+    x_slice = x[0 : num * length]
     x_slice = x_slice.reshape((num, length)).T
 
     return x_slice
@@ -163,4 +162,4 @@ def noise_floor_to_sigma(nf, alpha, psd=False):
             Sigma value of normally distributed random variable that will
             result in the desired noise floor
     """
-    return np.sqrt(alpha*10**(nf/10))
+    return np.sqrt(alpha * 10 ** (nf / 10))

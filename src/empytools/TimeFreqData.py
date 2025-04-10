@@ -128,7 +128,7 @@ class TimeFreqData:
         """Update parameters depending on fs, N"""
         self._t = utils.time_array(fs, N)
         self._f = utils.freq_array(fs, N)
-        self._fbin = fs/N
+        self._fbin = fs / N
         self._PSDx = self.Px / self.fbin
 
     # Public methods
@@ -160,8 +160,9 @@ class TimeFreqData:
         if not hold:
             plt.show()
 
-    def plot_freq(self, fmt="-o", avg=True, hold=False, unit="V", power=False,
-                  psd=False, db=False):
+    def plot_freq(
+        self, fmt="-o", avg=True, hold=False, unit="V", power=False, psd=False, db=False
+    ):
         """
         Plot frequency data.
 
@@ -192,7 +193,7 @@ class TimeFreqData:
 
             if db:
                 unit = "dBW/Hz"
-                plt.plot(self.f / f_scale, 10*np.log10(plt_data), fmt)
+                plt.plot(self.f / f_scale, 10 * np.log10(plt_data), fmt)
             else:
                 unit = "W/Hz"
                 plt.plot(self.f / f_scale, plt_data, fmt)
@@ -204,7 +205,7 @@ class TimeFreqData:
 
             if db:
                 unit = "dBW"
-                plt.plot(self.f / f_scale, 10*np.log10(plt_data), fmt)
+                plt.plot(self.f / f_scale, 10 * np.log10(plt_data), fmt)
             else:
                 unit = "W"
                 plt.plot(self.f / f_scale, plt_data, fmt)
