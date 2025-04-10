@@ -82,6 +82,8 @@ def get_si(x_arr):
     x_sign = np.sign(x_order)
     x_scale = x_sign * np.floor(np.abs(x_order) / 3) * 3
     x_scale = np.floor(x_order / 3) * 3
+    # Bound to defined orders
+    x_scale = np.max((np.min((x_scale, 12)), -18))
     return 10**x_scale, units[x_scale]
 
 
