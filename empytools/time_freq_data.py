@@ -1,6 +1,8 @@
+"""TimeFreqData Class"""
+
 import numpy as np
 from matplotlib import pyplot as plt
-import empytools.utils as utils
+from empytools import utils
 
 
 class TimeFreqData:
@@ -9,38 +11,38 @@ class TimeFreqData:
 
     Independent Attributes
     ----------------------
-    x    : array-like
+    x_t  : array-like
            Time domain signal, ifft(X)
     fs   : scalar
            Sampling frequency
-    N    : integer
+    n    : integer
            Number of samples
 
     Dependent Attributes
     --------------------
-    X    : array-like
-           Frequency domain signal, fft(x)
-    Px   : array-like
-           Power in frequency domain, |X|^2
-    PSDx : array-like
-           Power spectral density estimate
-    fbin : scalar
-           Size of a single frequency bin
-    t    : array-like
-           Time array (for plotting)
-    f    : array-like
-           Frequency array (for plotting)
+    x_f   : array-like
+            Frequency domain signal, fft(x)
+    p_x   : array-like
+            Power in frequency domain, |X|^2
+    psd_x : array-like
+            Power spectral density estimate
+    fbin  : scalar
+            Size of a single frequency bin
+    t     : array-like
+            Time array (for plotting)
+    f     : array-like
+            Frequency array (for plotting)
 
     Attribute Relationships
     -----------------------
-          x --> X, Px
-          x --> N (if N not provided)
-      fs, N --> fbin, t, f
-    x, fbin --> PSDx
+          x_t --> x_f, p_x
+          x --> n (if n not provided)
+      fs, n --> fbin, t, f
+    x, fbin --> psd_x
 
     """
 
-    def __init__(self, x, fs=1, N=None):
+    def __init__(self, x_t, fs=1, n=None):
         """
         Initialize method.
 
@@ -48,88 +50,106 @@ class TimeFreqData:
 
         Parameters
         ----------
-        x  : array-like
-             Input time domain data
-        fs : scalar, optional
-             Input sampling frequency
-        N  : scalar, optional
-             Number of samples for an FFT. If not provided N=length(x), if
-             provided then spectral averaging will be used.
+        x_t : array-like
+              Input time domain data
+        fs  : scalar, optional
+              Input sampling frequency
+        n   : scalar, optional
+              Number of samples for an FFT. If not provided n=length(x), if
+              provided then spectral averaging will be used.
         """
-        if N is None:
-            N = len(x)
 
-        self.N = N
+        self._t = []
+        self._f = []
+        self._fbin = []
+        self._psd_x = []
+
+        if n is None:
+            n = len(x_t)
+
+        self.n = n
         self.fs = fs
-        self.x = x
+        self.x_t = x_t
 
     # Properties with setters
     @property
-    def x(self):
-        return self._x
+    def x_t(self):
+        """Return x(t)"""
+        return self._x_t
 
-    @x.setter
-    def x(self, x):
-        self._xorig = x  # Save the original data in case slicing deletes some
-        self._x = utils.slice(x, self.N)
-        self._X = np.fft.fftshift(np.fft.fft(self.x, axis=0) / self.N)
-        self._Px = np.abs(self.X**2)
-        self.__update_time_freq(self.fs, self.N)
+    @x_t.setter
+    def x_t(self, x_t):
+        """Set x(t) and update dependent paramaters"""
+        self._x_t_orig = x_t  # Save the original data in case slicing deletes some
+        self._x_t = utils.slice_arr(x_t, self.n)
+        self._x_f = np.fft.fftshift(np.fft.fft(self.x_t, axis=0) / self.n)
+        self._p_x = np.abs(self.x_f**2)
+        self.__update_time_freq(self.fs, self.n)
 
     @property
-    def N(self):
-        return self._N
+    def n(self):
+        """Return number of samples"""
+        return self._n
 
-    @N.setter
-    def N(self, N):
-        self._N = N
-        if hasattr(self, "_x"):
+    @n.setter
+    def n(self, n):
+        """Set number of samples and update x(t) if necessary"""
+        self._n = n
+        if hasattr(self, "_x_t"):
             # x exists and needs to be reshaped
             # Grab original data before reshaping it
-            self.x = self._xorig
+            self.x_t = self._x_t_orig
 
     @property
     def fs(self):
+        """Return sample frequency"""
         return self._fs
 
     @fs.setter
     def fs(self, fs):
+        """Set sample frequency and update time/freq arrays"""
         self._fs = fs
-        if hasattr(self, "_N") and hasattr(self, "_Px"):
-            self.__update_time_freq(self.fs, self.N)
+        if hasattr(self, "_n") and hasattr(self, "_p_x"):
+            self.__update_time_freq(self.fs, self.n)
 
     # Properties without setters (read only)
     @property
-    def X(self):
-        return self._X
+    def x_f(self):
+        """Return X(f)"""
+        return self._x_f
 
     @property
-    def Px(self):
-        return self._Px
+    def p_x(self):
+        """Return P(x)"""
+        return self._p_x
 
     @property
     def t(self):
+        """Retrun time array"""
         return self._t
 
     @property
     def f(self):
+        """Return frequency array"""
         return self._f
 
     @property
     def fbin(self):
+        """Return frequency bin size"""
         return self._fbin
 
     @property
-    def PSDx(self):
-        return self._PSDx
+    def psd_x(self):
+        """Return PSD(x)"""
+        return self._psd_x
 
     # Private methods
-    def __update_time_freq(self, fs, N):
-        """Update parameters depending on fs, N"""
-        self._t = utils.time_array(fs, N)
-        self._f = utils.freq_array(fs, N)
-        self._fbin = fs / N
-        self._PSDx = self.Px / self.fbin
+    def __update_time_freq(self, fs, n):
+        """Update parameters depending on fs, n"""
+        self._t = utils.time_array(fs, n)
+        self._f = utils.freq_array(fs, n)
+        self._fbin = fs / n
+        self._psd_x = self.p_x / self.fbin
 
     # Public methods
     def plot_time(self, fmt="-o", avg=True, hold=False, unit="V"):
@@ -149,9 +169,9 @@ class TimeFreqData:
         """
         t_scale, t_unit = utils.get_si(self.t)
         if avg:
-            plt_data = np.mean(self.x, axis=1)
+            plt_data = np.mean(self.x_t, axis=1)
         else:
-            plt_data = self.x
+            plt_data = self.x_t
 
         plt.plot(self.t / t_scale, plt_data, fmt)
         plt.xlabel(f"Time [{t_unit}s]")
@@ -187,9 +207,9 @@ class TimeFreqData:
 
         if psd:
             if avg:
-                plt_data = np.mean(self.PSDx, axis=1)
+                plt_data = np.mean(self.psd_x, axis=1)
             else:
-                plt_data = self.PSDx
+                plt_data = self.psd_x
 
             if db:
                 unit = "dBW/Hz"
@@ -199,9 +219,9 @@ class TimeFreqData:
                 plt.plot(self.f / f_scale, plt_data, fmt)
         elif power:
             if avg:
-                plt_data = np.mean(self.Px, axis=1)
+                plt_data = np.mean(self.p_x, axis=1)
             else:
-                plt_data = self.Px
+                plt_data = self.p_x
 
             if db:
                 unit = "dBW"
@@ -211,9 +231,9 @@ class TimeFreqData:
                 plt.plot(self.f / f_scale, plt_data, fmt)
         else:
             if avg:
-                plt_data = np.mean(self.X, axis=1)
+                plt_data = np.mean(self.x_f, axis=1)
             else:
-                plt_data = self.X
+                plt_data = self.x_f
 
             plt.plot(self.f / f_scale, np.abs(plt_data), fmt)
 

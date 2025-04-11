@@ -1,7 +1,9 @@
+"""Utilities module"""
+
 import numpy as np
 
 
-def time_array(fs, N):
+def time_array(fs, n):
     """
     Get time array.
 
@@ -12,7 +14,7 @@ def time_array(fs, N):
     ----------
     fs : scalar
          Sampling frequency
-    N  : scalar
+    n  : scalar
          Number of samples
 
     Returns
@@ -20,10 +22,10 @@ def time_array(fs, N):
     out : array
           Time array
     """
-    return np.linspace(0, N / fs, N, endpoint=False)
+    return np.linspace(0, n / fs, n, endpoint=False)
 
 
-def freq_array(fs, N):
+def freq_array(fs, n):
     """
     Get frequency array.
 
@@ -34,7 +36,7 @@ def freq_array(fs, N):
     ----------
     fs : scalar
          Sampling frequency
-    N  : scalar
+    n  : scalar
          Number of samples
 
     Returns
@@ -42,7 +44,7 @@ def freq_array(fs, N):
     out : array
           Frequency array
     """
-    return np.fft.fftshift(np.fft.fftfreq(N, 1 / fs))
+    return np.fft.fftshift(np.fft.fftfreq(n, 1 / fs))
 
 
 def get_si(x_arr):
@@ -105,7 +107,7 @@ def get_si_str(x):
     return f"{x/scale:0.3} {unit}"
 
 
-def slice(x, length):
+def slice_arr(x, length):
     """
     Slices 1-D array and reshapes into 2-D array.
 
@@ -141,7 +143,7 @@ def slice(x, length):
     return x_slice
 
 
-def noise_floor_to_sigma(nf, alpha, psd=False):
+def noise_floor_to_sigma(nf, alpha):
     """
     Calculates the sigma of a normally distributed random variable that would
     result in a specific noise floor.
