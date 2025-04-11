@@ -6,7 +6,8 @@ from empytools.utils import freq_array
 from empytools.utils import get_si_str
 from empytools.utils import slice as mpt_slice
 
-class TestUtils(unittest.TestCase):       
+
+class TestUtils(unittest.TestCase):
     def test_time_array_float(self):
         """
         Test time_array
@@ -14,9 +15,9 @@ class TestUtils(unittest.TestCase):
         fs = 1e3
         N = 10
         result = time_array(fs, N)
-        expect = np.arange(N)/fs
+        expect = np.arange(N) / fs
         self.assertTrue(np.allclose(result, expect))
-        
+
     def test_freq_array_float(self):
         """
         Test freq_array
@@ -24,7 +25,7 @@ class TestUtils(unittest.TestCase):
         fs = 1e3
         N = 10
         result = freq_array(fs, N)
-        expect = np.linspace(-fs/2, fs/2, N, endpoint=False)
+        expect = np.linspace(-fs / 2, fs / 2, N, endpoint=False)
         self.assertTrue(np.allclose(result, expect))
 
     def test_get_si_str_in(self):
@@ -33,12 +34,12 @@ class TestUtils(unittest.TestCase):
         """
         x = 3.265e-3
         result = get_si_str(x)
-        expect = '3.27 m'
+        expect = "3.27 m"
         self.assertEqual(result, expect)
-        
+
         x = 3.264e6
         result = get_si_str(x)
-        expect = '3.26 M'
+        expect = "3.26 M"
         self.assertEqual(result, expect)
 
     def test_get_si_str_out(self):
@@ -47,12 +48,12 @@ class TestUtils(unittest.TestCase):
         """
         x = 3.265e-19
         result = get_si_str(x)
-        expect = '0.326 a'
+        expect = "0.326 a"
         self.assertEqual(result, expect)
-        
+
         x = 3.264e15
         result = get_si_str(x)
-        expect = '3.26e+03 T'
+        expect = "3.26e+03 T"
         self.assertEqual(result, expect)
 
     def test_slice(self):
@@ -71,5 +72,6 @@ class TestUtils(unittest.TestCase):
         expect = (3, 4)
         self.assertEqual(result, expect)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
