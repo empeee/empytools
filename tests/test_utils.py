@@ -1,3 +1,5 @@
+"""Test for utils module"""
+
 import numpy as np
 import pytest
 
@@ -7,23 +9,28 @@ from empytools.utils import get_si_str
 from empytools.utils import slice_arr
 from empytools.utils import noise_floor_to_sigma
 
+
 def test_time_array():
     """Test time_array"""
-    for i in range(0,10):
-        N = np.random.randint(low=2, high=100)
-        fs = 10**np.random.normal(loc=1, scale=10)
-        result = time_array(fs, N)
-        expect = np.arange(N) / fs
+    for _ in range(0, 10):
+        n = np.random.randint(low=2, high=100)
+        fs = 10 ** np.random.normal(loc=1, scale=10)
+        result = time_array(fs, n)
+        expect = np.arange(n) / fs
         assert np.allclose(result, expect)
+
 
 def test_freq_array_float():
     """Test freq_array"""
-    for i in range(0,10):
-        N = np.random.randint(low=2, high=50)
-        fs = 10**np.random.normal(loc=1, scale=1)
-        result = freq_array(fs, N)
-        expect = (N%2)*fs/(2*N) + np.linspace(-fs / 2, fs / 2, N, endpoint=False)
+    for _ in range(0, 10):
+        n = np.random.randint(low=2, high=50)
+        fs = 10 ** np.random.normal(loc=1, scale=1)
+        result = freq_array(fs, n)
+        expect = (n % 2) * fs / (2 * n) + np.linspace(
+            -fs / 2, fs / 2, n, endpoint=False
+        )
         assert np.allclose(result, expect)
+
 
 def test_get_si_str():
     """Test in/out bounds inputs"""
@@ -47,11 +54,12 @@ def test_get_si_str():
     expect = "3.26e+03 T"
     assert result == expect
 
+
 def test_slice():
     """Check reshaped array"""
     x = np.arange(12)
     length = 4
-    x_slice = slice_arr(x, length) 
+    x_slice = slice_arr(x, length)
     result = x_slice.shape
     expect = (4, 3)
     assert result == expect
@@ -63,12 +71,13 @@ def test_slice():
     expect = (3, 4)
     assert result == expect
 
+
 def test_slice_error():
     """Check reshaped array with bad value"""
     x = np.arange(12)
     length = 13
     with pytest.raises(ValueError):
-        result = slice_arr(x, length)
+        slice_arr(x, length)
 
 
 def test_noise_to_sigma():
