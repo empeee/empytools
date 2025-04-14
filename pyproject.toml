@@ -9,8 +9,5 @@ name = "empytools"
 version = "2025.04.11"
 dependencies = [
   "numpy",
-  "matplotlib"
+  "matplotlib",
 ]
-
-[project.optional-dependencies]
-dev = ["black", "pytest"]

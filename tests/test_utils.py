@@ -25,10 +25,13 @@ class TestUtils(unittest.TestCase):
     def test_freq_array_float(self):
         """Test freq_array"""
         for i in range(0,10):
-            N = 2*np.random.randint(low=1, high=50)
+            N = np.random.randint(low=2, high=50)
             fs = 10**np.random.normal(loc=1, scale=1)
             result = freq_array(fs, N)
-            expect = np.linspace(-fs / 2, fs / 2, N, endpoint=False)
+            expect = (N%2)*fs/(2*N) + np.linspace(-fs / 2, fs / 2, N, endpoint=False)
+
+            print(result)
+            print(expect)
             self.assertTrue(np.allclose(result, expect))
 
     def test_get_si_str(self):
