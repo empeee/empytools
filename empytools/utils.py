@@ -1,7 +1,9 @@
+"""Utilities module"""
+
 import numpy as np
 
 
-def time_array(fs, N):
+def time_array(fs, n):
     """
     Get time array.
 
@@ -12,7 +14,7 @@ def time_array(fs, N):
     ----------
     fs : scalar
          Sampling frequency
-    N  : scalar
+    n  : scalar
          Number of samples
 
     Returns
@@ -20,10 +22,10 @@ def time_array(fs, N):
     out : array
           Time array
     """
-    return np.linspace(0, N / fs, N, endpoint=False)
+    return np.linspace(0, n / fs, n, endpoint=False)
 
 
-def freq_array(fs, N):
+def freq_array(fs, n):
     """
     Get frequency array.
 
@@ -34,7 +36,7 @@ def freq_array(fs, N):
     ----------
     fs : scalar
          Sampling frequency
-    N  : scalar
+    n  : scalar
          Number of samples
 
     Returns
@@ -42,7 +44,7 @@ def freq_array(fs, N):
     out : array
           Frequency array
     """
-    return np.fft.fftshift(np.fft.fftfreq(N, 1 / fs))
+    return np.fft.fftshift(np.fft.fftfreq(n, 1 / fs))
 
 
 def get_si(x_arr):
@@ -82,6 +84,8 @@ def get_si(x_arr):
     x_sign = np.sign(x_order)
     x_scale = x_sign * np.floor(np.abs(x_order) / 3) * 3
     x_scale = np.floor(x_order / 3) * 3
+    # Bound to defined orders
+    x_scale = np.max((np.min((x_scale, 12)), -18))
     return 10**x_scale, units[x_scale]
 
 
@@ -100,10 +104,10 @@ def get_si_str(x):
                String that is x/scale with SI prefix
     """
     scale, unit = get_si(x)
-    return f'{x/scale:0.3} {unit}'
+    return f"{x/scale:0.3} {unit}"
 
 
-def slice(x, length):
+def slice_arr(x, length):
     """
     Slices 1-D array and reshapes into 2-D array.
 
@@ -129,18 +133,17 @@ def slice(x, length):
 
     if length > x.size:
         raise ValueError(
-            f'length ({length}) cannot be greater than the '
-            f'size of x ({x.size})'
+            f"length ({length}) cannot be greater than the size of x ({x.size})"
         )
 
     num = int(np.floor(x.size / length))
-    x_slice = x[0: num * length]
+    x_slice = x[0 : num * length]
     x_slice = x_slice.reshape((num, length)).T
 
     return x_slice
 
 
-def noise_floor_to_sigma(nf, alpha, psd=False):
+def noise_floor_to_sigma(nf, alpha):
     """
     Calculates the sigma of a normally distributed random variable that would
     result in a specific noise floor.
@@ -163,4 +166,4 @@ def noise_floor_to_sigma(nf, alpha, psd=False):
             Sigma value of normally distributed random variable that will
             result in the desired noise floor
     """
-    return np.sqrt(alpha*10**(nf/10))
+    return np.sqrt(alpha * 10 ** (nf / 10))
