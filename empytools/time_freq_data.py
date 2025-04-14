@@ -42,6 +42,12 @@ class TimeFreqData:
 
     """
 
+    # pylint: disable=too-many-instance-attributes
+    # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-positional-arguments
+    # pylint: disable=too-many-branches
+    # I don't want to think about how to fix these right now
+
     def __init__(self, x_t, fs=1, n=None):
         """
         Initialize method.
