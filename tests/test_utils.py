@@ -4,7 +4,7 @@ import numpy as np
 from empytools.utils import time_array
 from empytools.utils import freq_array
 from empytools.utils import get_si_str
-from empytools.utils import slice as mpt_slice
+from empytools.utils import slice_arr as slice_arr
 
 
 class TestUtils(unittest.TestCase):
@@ -62,13 +62,13 @@ class TestUtils(unittest.TestCase):
         """
         x = np.arange(12)
         length = 4
-        result = mpt_slice(x, length).shape
+        result = slice_arr(x, length).shape
         expect = (4, 3)
         self.assertEqual(result, expect)
 
         # Reshape
         length = 3
-        result = mpt_slice(x, length).shape
+        result = slice_arr(x, length).shape
         expect = (3, 4)
         self.assertEqual(result, expect)
 
