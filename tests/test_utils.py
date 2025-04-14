@@ -8,30 +8,31 @@ from empytools.utils import slice_arr as slice_arr
 
 
 class TestUtils(unittest.TestCase):
-    def test_time_array_float(self):
-        """
-        Test time_array
-        """
-        fs = 1e3
-        N = 10
-        result = time_array(fs, N)
-        expect = np.arange(N) / fs
-        self.assertTrue(np.allclose(result, expect))
+
+    def setUp(self):
+        """Initial test vars"""
+        pass
+    
+    def test_time_array(self):
+        """Test time_array"""
+        for i in range(0,10):
+            N = np.random.randint(low=2, high=100)
+            fs = 10**np.random.normal(loc=1, scale=10)
+            result = time_array(fs, N)
+            expect = np.arange(N) / fs
+            self.assertTrue(np.allclose(result, expect))
 
     def test_freq_array_float(self):
-        """
-        Test freq_array
-        """
-        fs = 1e3
-        N = 10
-        result = freq_array(fs, N)
-        expect = np.linspace(-fs / 2, fs / 2, N, endpoint=False)
-        self.assertTrue(np.allclose(result, expect))
+        """Test freq_array"""
+        for i in range(0,10):
+            N = 2*np.random.randint(low=1, high=50)
+            fs = 10**np.random.normal(loc=1, scale=1)
+            result = freq_array(fs, N)
+            expect = np.linspace(-fs / 2, fs / 2, N, endpoint=False)
+            self.assertTrue(np.allclose(result, expect))
 
-    def test_get_si_str_in(self):
-        """
-        Test in bounds input
-        """
+    def test_get_si_str(self):
+        """Test in/out bounds inputs"""
         x = 3.265e-3
         result = get_si_str(x)
         expect = "3.27 m"
@@ -42,10 +43,6 @@ class TestUtils(unittest.TestCase):
         expect = "3.26 M"
         self.assertEqual(result, expect)
 
-    def test_get_si_str_out(self):
-        """
-        Test out of bounds input
-        """
         x = 3.265e-19
         result = get_si_str(x)
         expect = "0.326 a"
@@ -57,9 +54,7 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(result, expect)
 
     def test_slice(self):
-        """
-        Check reshaped array
-        """
+        """Check reshaped array"""
         x = np.arange(12)
         length = 4
         result = slice_arr(x, length).shape
