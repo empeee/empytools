@@ -104,7 +104,7 @@ def get_si_str(x):
                String that is x/scale with SI prefix
     """
     scale, unit = get_si(x)
-    return f"{x/scale:0.3} {unit}"
+    return f"{x/scale:#.3g} {unit}"
 
 
 def slice_arr(x, length):
