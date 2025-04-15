@@ -1,6 +1,7 @@
 """Tests for time_freq_data module"""
 import pytest
 import numpy as np
+from matplotlib import pyplot as plt
 from empytools.time_freq_data import TimeFreqData
 
 
@@ -106,8 +107,10 @@ def test_n_setter(data):
         else:
             assert val == d1_dict[key], f"{val}, {d1_dict[key]}"
 
-def test_plots():
+def test_plots(monkeypatch):
     """Check plotting methods"""
+    monkeypatch.setattr(plt, 'show', lambda: None)
+
     x = np.array([1, 1, 0, -1])
     d1 = TimeFreqData(x)
 
