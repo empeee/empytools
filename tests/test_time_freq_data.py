@@ -1,60 +1,110 @@
 """Tests for time_freq_data module"""
-
+import pytest
 import numpy as np
-
 from empytools.time_freq_data import TimeFreqData
 
 
-def test_class_init():
+data_tfd = [
+    {
+        '_t': np.array([0, 1, 2, 3]),
+        '_f': np.array([-0.5, -0.25,  0,  0.25]),
+        '_fbin': 0.25,
+        '_psd_x': np.array([0, 1, 0, 1]).reshape((4,1)),
+        '_n': 4,
+        '_fs': 1,
+        '_x_t_orig': np.array([0, 1, 0, -1]).reshape((4,1)),
+        '_x_t': np.array([0, 1, 0,-1]).reshape((4,1)),
+        '_x_f': np.array([0+0j, 0+0.5j, 0+0j, 0-0.5j]).reshape((4,1)),
+        '_p_x': np.array([0, 0.25, 0, 0.25]).reshape((4,1))
+    },
+    {
+        '_t': np.array([0, 0.001, 0.002, 0.003]),
+        '_f': np.array([-500, -250,  0,  250]),
+        '_fbin': 250,
+        '_psd_x': np.array([0, 0, 0.004, 0]).reshape((4,1)),
+        '_n': 4,
+        '_fs': 1000,
+        '_x_t_orig': np.array([1, 1, 1, 1]).reshape((4,1)),
+        '_x_t': np.array([1, 1, 1, 1]).reshape((4,1)),
+        '_x_f': np.array([0+0j, 0+0j, 1+0j, 0+0j]).reshape((4,1)),
+        '_p_x': np.array([0, 0, 1, 0]).reshape((4,1))
+    },
+    {
+        '_t': np.array([0, 1, 2, 3, 4, 5, 6, 7]),
+        '_f': np.array([-0.5, -0.375, -0.25,  -0.125, 0,  0.125, 0.25, 0.375]),
+        '_fbin': 0.125,
+        '_psd_x': np.array([0, 0, 2, 0, 0, 0, 2, 0]).reshape((8,1)),
+        '_n': 8,
+        '_fs': 1,
+        '_x_t_orig': np.array([0, 1, 0, -1, 0, 1, 0, -1]).reshape((8,1)),
+        '_x_t': np.array([0, 1, 0, -1, 0, 1, 0, -1]).reshape((8,1)),
+        '_x_f': np.array([0+0j, 0+0j, 0+0.5j, 0+0j, 0+0j, 0+0j, 0-0.5j, 0+0j]).reshape((8,1)),
+        '_p_x': np.array([0, 0, 0.25, 0, 0, 0, 0.25, 0]).reshape((8,1))
+    },
+]
+
+
+@pytest.mark.parametrize("data", data_tfd)
+def test_class_init(data):
     """Check initialization method"""
-    x = np.array([0, 1, 0, -1])
-    fs = 1
+    d1 = TimeFreqData(data['_x_t'], data['_fs']).__dict__
 
-    x_expect = np.array(x).reshape((4, 1))
-    fs_expect = fs
-    n_expect = len(x)
-    x_f_expect = np.array([0, 0.5, 0, 0.5]).reshape((4, 1))
-    p_x_expect = x_f_expect**2
-    fbin_expect = fs_expect / n_expect
-    psd_x_expect = p_x_expect / fbin_expect
-    t_expect = np.arange(n_expect) / fs_expect
-    f_expect = (n_expect % 2) * fs_expect / (2 * n_expect) + np.linspace(
-        -fs_expect / 2, fs_expect / 2, n_expect, endpoint=False
-    )
-
-    d1 = TimeFreqData(x, fs)
-
-    assert np.allclose(d1.x_t, x_expect)
-    assert d1.fs == fs_expect
-    assert d1.n == n_expect
-    assert np.allclose(np.abs(d1.x_f), x_f_expect)
-    assert np.allclose(d1.p_x, p_x_expect)
-    assert d1.fbin == fbin_expect
-    assert np.allclose(d1.psd_x, psd_x_expect)
-    assert np.allclose(d1.t, t_expect)
-    assert np.allclose(d1.f, f_expect)
+    for key, val in data.items():
+        if type(val) == type(np.array([])):
+            assert np.allclose(val, d1[key]), f"{val}, {d1[key]}"
+        else:
+            assert val == d1[key], f"{val}, {d1[key]}"
 
 
-def test_n_setter():
-    """Check n setter method"""
-    x = np.array([0, 1, 0, -1, 0, 1, 0, -1])
 
-    d1 = TimeFreqData(x)
-    d1.n = 4
-    assert d1.x_t.shape == (4, 2)
-
-
-def test_fs_setter():
+@pytest.mark.parametrize("data", data_tfd)
+def test_fs_setter(data):
     """Check fs setter method"""
-    x = np.array([0, 1, 0, -1])
-    fs = 1e3
-    n = len(x)
+    d1 = TimeFreqData(data['_x_t'])
+    d1.fs = data["_fs"]
 
-    d1 = TimeFreqData(x)
-    d1.fs = fs
+    assert d1.fbin == data["_fs"] / data["_n"]
 
-    assert d1.fbin == fs / n
+data_tfd_reshape = [
+    {
+        '_t': np.array([0, 1, 2 ,3]),
+        '_f': np.array([-0.5,  -0.25, 0, 0.25]),
+        '_fbin': 0.25,
+        '_psd_x': np.array([[0, 0],[0, 0],[4, 4],[0, 0]]),
+        '_n': 4,
+        '_fs': 1,
+        '_x_t_orig': np.array([1, 1, 1, 1, 1, 1, 1, 1]),
+        '_x_t': np.array([[1, 1],[1, 1],[1, 1],[1, 1]]),
+        '_x_f': np.array([[0+0j, 0+0j],[0+0j, 0+0j],[1+0j,  1+0j],[0+0j, 0+0j]]),
+        '_p_x': np.array([[0, 0],[0, 0],[1, 1],[0, 0]])
+    },
+    {
+        '_t': np.array([0, 1, 2, 3]),
+        '_f': np.array([-0.5, -0.25,  0,  0.25]),
+        '_fbin': 0.25,
+        '_psd_x': np.array([[0, 0], [1, 1],[0, 0],[1, 1]]),
+        '_n': 4,
+        '_fs': 1,
+        '_x_t_orig': np.array([0, 1, 0, -1, 0, 1, 0, -1]),
+        '_x_t': np.array([[0, 0],[ 1, 1],[0, 0],[-1, -1]]),
+        '_x_f': np.array([[0+0j, 0+0j],[0+0.5j, 0+0.5j],[0+0j , 0+0j ],[0-0.5j, 0-0.5j]]),
+        '_p_x': np.array([[0, 0],[0.25, 0.25],[0, 0],[0.25, 0.25]])
+    },
+]
 
+
+@pytest.mark.parametrize("data", data_tfd_reshape)
+def test_n_setter(data):
+    """Check n setter method"""
+    d1 = TimeFreqData(data['_x_t_orig'])
+    d1.n = d1.n//2
+    d1_dict = d1.__dict__
+    
+    for key, val in data.items():
+        if type(val) == type(np.array([])):
+            assert np.allclose(val, d1_dict[key]), f"{val}, {d1_dict[key]}"
+        else:
+            assert val == d1_dict[key], f"{val}, {d1_dict[key]}"
 
 def test_plots():
     """Check plotting methods"""
