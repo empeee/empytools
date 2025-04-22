@@ -18,16 +18,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-    - uses: abatilo/actions-poetry@v2
-    - name: Poetry install dependencies
-      run: poetry install
+
     - name: Run Lint
       run: |
-        poetry run pylint empytools
-        poetry run ruff check empytools
-        poetry run black --check --diff empytools
+        uv run pylint empytools
+        uv run ruff check empytools
+        uv run black --check --diff empytools
     - name: Run Pytest
-      run: poetry run pytest --cov=empytools tests/
+      run: uv run pytest --cov=empytools tests/

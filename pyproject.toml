@@ -2,27 +2,25 @@
 name = "empytools"
 version = "0.0.1"
 description = ""
-authors = [
-    {name = "Mark Pude",email = "markpude@gmail.com"}
-]
-license = {text = "MIT"}
-readme = "README.md"
+authors = [{ name = "Mark Pude", email = "markpude@gmail.com" }]
 requires-python = ">=3.11"
+readme = "README.md"
+license = { text = "MIT" }
 dependencies = [
     "numpy (>=2.2.4,<3.0.0)",
     "matplotlib (>=3.10.1,<4.0.0)",
 ]
 
-[tool.poetry]
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.3.5"
-pytest-cov = "^6.1.1"
-pylint = "^3.3.6"
-ruff = "^0.11.5"
-black = "^25.1.0"
-pytest-sugar = "^1.0.0"
+[dependency-groups]
+dev = [
+    "pytest>=8.3.5,<9",
+    "pytest-cov>=6.1.1,<7",
+    "pylint>=3.3.6,<4",
+    "ruff>=0.11.5,<0.12",
+    "black>=25.1.0,<26",
+    "pytest-sugar>=1.0.0,<2",
+]
 
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
