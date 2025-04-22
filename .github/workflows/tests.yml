@@ -24,5 +24,5 @@ jobs:
     - uses: abatilo/actions-poetry@v4
     - name: Run tests
       run: |
-        poetry insall
+        poetry install
         poetry run tox
