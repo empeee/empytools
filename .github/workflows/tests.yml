@@ -22,5 +22,5 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - uses: abatilo/actions-poetry@v4
-    - name: View poetry --help
-      run: poetry --help
+    - name: Run tests
+      run: poetry run tox
