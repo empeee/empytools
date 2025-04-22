@@ -23,4 +23,6 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - uses: abatilo/actions-poetry@v4
     - name: Run tests
-      run: poetry run tox
+      run: |
+        poetry insall
+        poetry run tox
