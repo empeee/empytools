@@ -1,6 +1,6 @@
 [project]
 name = "empytools"
-version = "0.0.2"
+version = "0.0.3"
 description = ""
 authors = [{ name = "Mark Pude", email = "markpude@gmail.com" }]
 requires-python = ">=3.11"
